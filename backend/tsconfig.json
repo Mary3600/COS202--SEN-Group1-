@@ -1,4 +1,5 @@
-{
+//Initial configuration 
+/*{
   // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
     // File Layout
@@ -40,5 +41,22 @@
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
+  }
+}
+*/
+
+//Configuration adviced
+{
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+
+    "module": "commonjs",
+    "target": "ES6",
+
+    "esModuleInterop": true,
+    "strict": true,
+
+    "skipLibCheck": true
   }
 }
