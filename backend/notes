@@ -1,0 +1,3 @@
+Database Connection
+│    Connection String:
+│    postgres://2ad182b7b9902d015a40b1b9a9ead594200d0b91859214de0f32a013f52b2e57:sk_1jBKCLv3rWB7qDI5KUx_w@db.prisma.io:5432/postgres?sslmode=require
