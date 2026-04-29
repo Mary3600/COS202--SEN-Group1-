@@ -1,10 +1,6 @@
-import CalendarView from "../components/CalendarView";
-
 export default function Home() {
-  return (
-    <main>
-     
-      <CalendarView />
-    </main>
-  );
+  return <h1>Dashboard coming soon</h1>;
+  <style>
+    backgroundColor:"white"
+  </style>
 }
