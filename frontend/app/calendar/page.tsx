@@ -2,7 +2,7 @@
 import { useState } from "react";
 
 import Image from "next/image";
-import { Bell, Settings, ChevronLeft, ChevronRight, Search, LayoutDashboard, CalendarDays, ArchiveRestore, Menu  } from "lucide-react";
+import { Bell, Settings, ChevronLeft, ChevronRight, Search, LayoutDashboard, CalendarDays, ArchiveRestore, Menu, Bold  } from "lucide-react";
 
 export default function CalendarView() {
   const days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
@@ -51,11 +51,11 @@ const [collapsed, setCollapsed] = useState(false);
 {sidebarOpen && (
   <div
     style={{
-      width: collapsed ? "80px" : "250px",
+      width: collapsed ? "70px" : "280px",
       transition: "0.3s",
-      backgroundColor: "#165A50",
-      color: "#fff",
+      backgroundColor: "#F1F5F9",
       padding: "20px",
+      color: "#fff",
       display: "flex",
       flexDirection: "column",
       gap: "20px",
@@ -72,17 +72,17 @@ const [collapsed, setCollapsed] = useState(false);
     >
       {!collapsed && (
       <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-        <Image src="/Momento.jpeg" alt="Logo" width={40} height={40} />
+        <Image src="/Momento.jpeg" alt="Logo" width={50} height={50} />
         <div>
-          <p style={{ fontWeight: "bold" }}>Task Manager</p>
-          <p style={{ fontSize: "11px", paddingTop: "3px" }}>THE MINDFUL SCHOLAR</p>
+          <p style={{ fontWeight: "bold", color: "#165A50" }}>Momento</p>
+          <p style={{ fontSize: "11px", paddingTop: "3px", color : "#64748B" }}>THE MINDFUL SCHOLAR</p>
         </div>
       </div>
     )}
 
       <Menu
         size={22}
-        style={{ cursor: "pointer" }}
+        style={{ cursor: "pointer", color: "#165A50" }}
         onClick={() => setCollapsed(!collapsed)}
       />
     </div>
@@ -102,10 +102,11 @@ const [collapsed, setCollapsed] = useState(false);
           gap: "10px",
           justifyContent: collapsed ? "center" : "flex-start",
           cursor: "pointer",
-          color: activePage === "dashboard" ? "#fff" : "#94A3B8",
+          color: activePage === "dashboard" ? "#165A50" : "#64748B",
+          fontWeight: activePage == "dashboard" ? "bold" : "normal",
         }}
       >
-        <LayoutDashboard size={20} />
+        <LayoutDashboard size={20}    />
         {!collapsed && <span>Dashboard</span>}
       </div>
 
@@ -118,7 +119,8 @@ const [collapsed, setCollapsed] = useState(false);
           gap: "10px",
           justifyContent: collapsed ? "center" : "flex-start",
           cursor: "pointer",
-          color: activePage === "calendar" ? "#fff" : "#94A3B8",
+          color: activePage === "calendar" ? "#165A50" : "#64748B",
+          fontWeight: activePage == "calendar" ? "bold" : "normal",
         }}
       >
         <CalendarDays size={20} />
@@ -134,7 +136,8 @@ const [collapsed, setCollapsed] = useState(false);
           gap: "10px",
           justifyContent: collapsed ? "center" : "flex-start",
           cursor: "pointer",
-          color: activePage === "archive" ? "#fff" : "#94A3B8",
+          color: activePage === "archive" ? "#165A50" : "#64748B",
+          fontWeight: activePage == "archive" ? "bold" : "normal",
         }}
       >
         <ArchiveRestore size={20} />
@@ -149,9 +152,9 @@ const [collapsed, setCollapsed] = useState(false);
           width: "100%",
           padding: "10px",
           borderRadius: "8px",
-          border: "none",
-          backgroundColor: "#fff",
-          color: "#165A50",
+          border: "20px",
+          backgroundColor: "#165A50",
+          color: "#fff",
           fontWeight: "bold",
           cursor: "pointer",
         }}
