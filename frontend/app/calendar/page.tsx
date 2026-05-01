@@ -1,17 +1,17 @@
 "use client";
 import { useState } from "react";
+
 import Image from "next/image";
-import { Bell, Settings, ChevronLeft, ChevronRight, Search, LayoutDashboard, CalendarDays, ArchiveRestore  } from "lucide-react";
+import { Bell, Settings, ChevronLeft, ChevronRight, Search, LayoutDashboard, CalendarDays, ArchiveRestore, Menu  } from "lucide-react";
 
 export default function CalendarView() {
   const days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
-
+  const [activePage, setActivePage] = useState("calendar");
   // STATE
   const [currentDate, setCurrentDate] = useState(new Date());
 
-  // 🆕 SIDEBAR STATE
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-
+const [sidebarOpen, setSidebarOpen] = useState(true);
+const [collapsed, setCollapsed] = useState(false);
   // MOCK TASK DATA
   const tasks = [
     { id: 1, title: "Assignment", date: "2026-04-12", priority: "high" },
@@ -47,85 +47,120 @@ export default function CalendarView() {
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
 
-      {/* 🟦 SIDEBAR */}
-      {sidebarOpen && (
-        <div
-          style={{
-            width: "250px",
-            backgroundColor: "#165A50",
-            color: "#fff",
-            padding: "20px",
-            display: "flex",
-            flexDirection: "column",
-            gap: "20px",
-          }}
-        >
-          <div style={{
-            display: "flex",
-            gap: "20px",
-            alignItems: "center",
-            padding: "15px 0px 20px 0px",
-          }}>
-            <div><Image src="/Momento.jpeg" alt="Logo" width={40} height={70} /></div>
-            <div>
-              <p style={{ fontWeight: "bold" }}>Task Manager</p>
-              <p style={{  }}>The Mindful Scholar</p>
-            </div>  
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-
-  {/* DASHBOARD */}
-  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-    <LayoutDashboard size={20} />
-    <span>Dashboard</span>
-  </div>
-
-  {/* CALENDAR */}
-  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-    <CalendarDays size={20} />
-    <span>Calendar</span>
-  </div>
-
-  {/* ARCHIVE */}
-  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-    <ArchiveRestore size={20} />
-    <span>Archive</span>
-  </div>
-
-</div>
-
-          {/* ADD TASK BUTTON */}
-          <button
-            style={{
-              marginTop: "20px",
-              padding: "10px",
-              borderRadius: "8px",
-              border: "none",
-              backgroundColor: "#fff",
-              color: "#165A50",
-              fontWeight: "bold",
-              cursor: "pointer",
-            }}
-          >
-            + Add Task
-          </button>
-
-          {/* TOGGLE BUTTON */}
-          <button
-            onClick={() => setSidebarOpen(false)}
-            style={{
-              marginTop: "auto",
-              background: "none",
-              border: "1px solid #fff",
-              color: "#fff",
-              padding: "6px",
-              cursor: "pointer",
-            }}
-          >
-            Close
-          </button>
+   {/* 🟦 SIDEBAR */}
+{sidebarOpen && (
+  <div
+    style={{
+      width: collapsed ? "80px" : "250px",
+      transition: "0.3s",
+      backgroundColor: "#165A50",
+      color: "#fff",
+      padding: "20px",
+      display: "flex",
+      flexDirection: "column",
+      gap: "20px",
+    }}
+  >
+    {/* TOP (Logo + toggle) */}
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: collapsed ? "center" : "space-between",
+        padding: "10px 0px 20px 0px",
+      }}
+    >
+      {!collapsed && (
+      <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+        <Image src="/Momento.jpeg" alt="Logo" width={40} height={40} />
+        <div>
+          <p style={{ fontWeight: "bold" }}>Task Manager</p>
+          <p style={{ fontSize: "11px", paddingTop: "3px" }}>THE MINDFUL SCHOLAR</p>
         </div>
-      )}
+      </div>
+    )}
+
+      <Menu
+        size={22}
+        style={{ cursor: "pointer" }}
+        onClick={() => setCollapsed(!collapsed)}
+      />
+    </div>
+
+    {/* LOGO */}
+    
+
+    {/* NAV ITEMS */}
+    <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+      
+      {/* DASHBOARD */}
+      <div
+        onClick={() => setActivePage("dashboard")}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+          justifyContent: collapsed ? "center" : "flex-start",
+          cursor: "pointer",
+          color: activePage === "dashboard" ? "#fff" : "#94A3B8",
+        }}
+      >
+        <LayoutDashboard size={20} />
+        {!collapsed && <span>Dashboard</span>}
+      </div>
+
+      {/* CALENDAR */}
+      <div
+        onClick={() => setActivePage("calendar")}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+          justifyContent: collapsed ? "center" : "flex-start",
+          cursor: "pointer",
+          color: activePage === "calendar" ? "#fff" : "#94A3B8",
+        }}
+      >
+        <CalendarDays size={20} />
+        {!collapsed && <span>Calendar</span>}
+      </div>
+
+      {/* ARCHIVE */}
+      <div
+        onClick={() => setActivePage("archive")}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+          justifyContent: collapsed ? "center" : "flex-start",
+          cursor: "pointer",
+          color: activePage === "archive" ? "#fff" : "#94A3B8",
+        }}
+      >
+        <ArchiveRestore size={20} />
+        {!collapsed && <span>Archive</span>}
+      </div>
+    </div>
+
+    {/* ADD TASK BUTTON */}
+    <div style={{ marginTop: "auto" }}>
+      <button
+        style={{
+          width: "100%",
+          padding: "10px",
+          borderRadius: "8px",
+          border: "none",
+          backgroundColor: "#fff",
+          color: "#165A50",
+          fontWeight: "bold",
+          cursor: "pointer",
+        }}
+      >
+        {collapsed ? "+" : "+ Add Task"}
+      </button>
+    </div>
+  </div>
+)}
 
       {/* 🟩 MAIN CONTENT */}
       <div
@@ -133,7 +168,7 @@ export default function CalendarView() {
           flex: 1,
           padding: "30px",
           backgroundColor: "#ffffff",
-          filter: sidebarOpen ? "blur(2px)" : "none",
+          filter: sidebarOpen && !collapsed ? "blur(2px)" : "none",
           transition: "0.3s",
         }}
       >
