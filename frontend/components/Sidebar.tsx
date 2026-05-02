@@ -14,6 +14,7 @@ export default function Sidebar({
   setCollapsed,
   activePage,
   setActivePage,
+  openModal,
 }) {
 
     if (!sidebarOpen) return null;
@@ -131,8 +132,10 @@ export default function Sidebar({
             fontWeight: "bold",
             cursor: "pointer",
           }}
+         onClick={openModal}
         >
           {collapsed ? "+" : "+ Add Task"}
+          
         </button>
       </div>
     </div>

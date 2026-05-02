@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
+import TaskModal from "../../components/TaskModal";
 
 import Image from "next/image";
 import { Bell, Settings, ChevronLeft, ChevronRight, Search, LayoutDashboard, CalendarDays, ArchiveRestore, Menu, Bold  } from "lucide-react";
@@ -10,19 +11,20 @@ export default function CalendarView() {
   const [activePage, setActivePage] = useState("calendar");
   // STATE
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [isModalOpen, setIsModalOpen] = useState(false);
+const [tasks, setTasks] = useState([
+  { id: 1, title: "Assignment", date: "2026-04-12", priority: "high" },
+  { id: 2, title: "Meeting", date: "2026-04-12", priority: "medium" },
+  { id: 3, title: "Gym", date: "2026-04-12", priority: "low" },
+  { id: 4, title: "Project Review", date: "2026-04-15", priority: "high" },
+  { id: 5, title: "Call John", date: "2026-04-16", priority: "medium" },
+  { id: 6, title: "Very Long Task Name To Test Overflow UI", date: "2026-04-20", priority: "low" },
+  { id: 7, title: "Next Month Task", date: "2026-05-02", priority: "high" },
+]);
 
 const [sidebarOpen, setSidebarOpen] = useState(true);
 const [collapsed, setCollapsed] = useState(false);
-  // MOCK TASK DATA
-  const tasks = [
-    { id: 1, title: "Assignment", date: "2026-04-12", priority: "high" },
-    { id: 2, title: "Meeting", date: "2026-04-12", priority: "medium" },
-    { id: 3, title: "Gym", date: "2026-04-12", priority: "low" },
-    { id: 4, title: "Project Review", date: "2026-04-15", priority: "high" },
-    { id: 5, title: "Call John", date: "2026-04-16", priority: "medium" },
-    { id: 6, title: "Very Long Task Name To Test Overflow UI", date: "2026-04-20", priority: "low" },
-    { id: 7, title: "Next Month Task", date: "2026-05-02", priority: "high" },
-  ];
+  
 
   // CALCULATIONS
   const year = currentDate.getFullYear();
@@ -45,6 +47,10 @@ const [collapsed, setCollapsed] = useState(false);
     setCurrentDate(new Date(year, month - 1, 1));
   };
 
+  const handleAddTask = (newTask) => {
+  setTasks((prev) => [...prev, newTask]);
+};
+
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
 
@@ -55,6 +61,7 @@ const [collapsed, setCollapsed] = useState(false);
   setCollapsed={setCollapsed}
   activePage={activePage}
   setActivePage={setActivePage}
+  openModal={() => setIsModalOpen(true)}
 />
 
       {/* 🟩 MAIN CONTENT */}
@@ -261,6 +268,11 @@ const [collapsed, setCollapsed] = useState(false);
           })}
         </div>
       </div>
+       <TaskModal
+      isOpen={isModalOpen}
+      onClose={() => setIsModalOpen(false)}
+      onAddTask={handleAddTask}
+    />
     </div>
   );
 }
