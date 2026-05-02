@@ -15,8 +15,8 @@ export default function Sidebar({
   activePage,
   setActivePage,
 }) {
-  // 👇 If sidebar is closed → render nothing
-  if (!sidebarOpen) return null;
+
+    if (!sidebarOpen) return null;
 
   return (
     <div
