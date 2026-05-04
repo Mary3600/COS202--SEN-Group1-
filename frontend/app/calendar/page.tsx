@@ -216,9 +216,15 @@ const fullDate = `${cellYear}-${String(cellMonth + 1).padStart(2, "0")}-${String
             const remainingCount = dayTasks.length - visibleTasks.length;
 
             const getColor = (priority) => {
-  if (priority === "high") return "#fecaca";
-  if (priority === "medium") return "#fef08a";
+  if (priority === "high") return "#FFDAD6";
+  if (priority === "medium") return "#FDF2D0";
   return "#bbf7d0";
+};
+
+const getFontColor = (priority) => {
+  if (priority === "high") return "#93000A";
+  if (priority === "medium") return "#D4980A";
+  return "#2E9E5B";
 };
 
             const isToday =
@@ -262,7 +268,8 @@ const fullDate = `${cellYear}-${String(cellMonth + 1).padStart(2, "0")}-${String
     }}
     style={{
       backgroundColor: getColor(task.priority),
-      color: "#fff",
+      color: getFontColor(task.priority),
+      fontWeight:"bold",
       padding: "2px 6px",
       borderRadius: "4px",
       fontSize: "10px",

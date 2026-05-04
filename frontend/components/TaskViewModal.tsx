@@ -44,10 +44,10 @@ export default function TaskViewModal({
         style={{
           width: "384px",
           
-          background: "rgba(255, 255, 255, 0)",
-          backdropFilter: "blur(8px)",
+          background: "rgba(255, 255, 255, 0.4)",
+          backdropFilter: "blur(3px)",
           border: "8px solid rgba(255, 255, 255, 0.2)",
-          boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
+          boxShadow: "0 4px 30px rgba(0, 0, 0, 0.2)",
           borderRadius: "20px",
           padding: "25px",
           
