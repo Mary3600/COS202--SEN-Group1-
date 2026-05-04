@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import {  CalendarDays  } from "lucide-react";
 
 export default function TaskViewModal({
   isOpen,
@@ -12,9 +13,15 @@ export default function TaskViewModal({
 
   // priority color (soft like we updated)
   const getPriorityColor = () => {
-    if (task.priority === "high") return "#fecaca";
-    if (task.priority === "medium") return "#fef08a";
+    if (task.priority === "high") return "#FFDAD6";
+    if (task.priority === "medium") return "#FDF2D0";
     return "#bbf7d0";
+  };
+
+  const getPriorityFontColor = () => {
+    if (task.priority === "high") return "#93000A";
+    if (task.priority === "medium") return "#D4980A";
+    return "#2E9E5B";
   };
 
   return (
@@ -26,8 +33,6 @@ export default function TaskViewModal({
         left: 0,
         width: "100%",
         height: "100%",
-        background: "rgba(0,0,0,0.4)",
-        backdropFilter: "blur(8px)", // ✨ glossy effect
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -37,11 +42,15 @@ export default function TaskViewModal({
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
-          width: "420px",
-          background: "#ffffff",
+          width: "384px",
+          
+          background: "rgba(255, 255, 255, 0)",
+          backdropFilter: "blur(8px)",
+          border: "8px solid rgba(255, 255, 255, 0.2)",
+          boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
           borderRadius: "20px",
           padding: "25px",
-          boxShadow: "0 20px 50px rgba(0,0,0,0.15)",
+          
           display: "flex",
           flexDirection: "column",
           gap: "15px",
@@ -52,6 +61,7 @@ export default function TaskViewModal({
           style={{
             alignSelf: "flex-start",
             background: getPriorityColor(),
+            color: getPriorityFontColor(),
             padding: "5px 12px",
             borderRadius: "20px",
             fontSize: "12px",
@@ -62,22 +72,23 @@ export default function TaskViewModal({
         </div>
 
         {/* TITLE */}
-        <h2 style={{ margin: 0 }}>{task.title}</h2>
+        <h2 style={{ margin: 0, color:"#191C1C", fontSize:"24px", fontWeight:"700", fontFamily:"Plus Jakarta Sans", lineHeight:"32px" }}>{task.title}</h2>
 
         {/* DESCRIPTION (using aspect as placeholder info) */}
-        <p style={{ color: "#64748B", fontSize: "14px" }}>
+        <p style={{ color: "#64748B", fontSize: "14px", fontWeight:"400" }}>
           Aspect: {task.aspect || "N/A"}
         </p>
 
         {/* DATE */}
-        <div style={{ fontSize: "14px" }}>
-          📅 {task.date}
+        <div style={{ fontSize: "14px", display:"flex", gap:"12px", color:"#191C1C" }}>
+          <CalendarDays size={20} color="#165A50"  display= "block"/>{task.date}
         </div>
 
         {/* ACTION BUTTONS */}
         <div
           style={{
             display: "flex",
+            width:"100%",
             justifyContent: "space-between",
             marginTop: "20px",
           }}
@@ -88,8 +99,9 @@ export default function TaskViewModal({
               padding: "10px 15px",
               borderRadius: "10px",
               border: "none",
-              background: "#e5e7eb",
+              background: "#165A50",
               cursor: "pointer",
+              width:"45%",
             }}
           >
             Edit
@@ -104,6 +116,7 @@ export default function TaskViewModal({
               background: "#ef4444",
               color: "#fff",
               cursor: "pointer",
+              width:"45%",
             }}
           >
             Delete
