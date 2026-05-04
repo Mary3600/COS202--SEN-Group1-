@@ -188,18 +188,26 @@ const [collapsed, setCollapsed] = useState(false);
               displayDay = currentDay;
             }
 
-            const fullDate = `${year}-${String(month + 1).padStart(2, "0")}-${String(displayDay).padStart(2, "0")}`;
+let cellMonth = month;
+let cellYear = year;
 
+if (currentDay <= 0) {
+  cellMonth = month - 1;
+} else if (currentDay > daysInMonth) {
+  cellMonth = month + 1;
+}
+
+const fullDate = `${cellYear}-${String(cellMonth + 1).padStart(2, "0")}-${String(displayDay).padStart(2, "0")}`;
             const dayTasks = tasks.filter(task => task.date === fullDate);
 
             const visibleTasks = dayTasks.slice(0, 2);
             const remainingCount = dayTasks.length - visibleTasks.length;
 
             const getColor = (priority) => {
-              if (priority === "high") return "#de2e2e";
-              if (priority === "medium") return "#fbb128";
-              return "#3ceb42";
-            };
+  if (priority === "high") return "#fecaca";
+  if (priority === "medium") return "#fef08a";
+  return "#bbf7d0";
+};
 
             const isToday =
               isCurrentMonth &&
@@ -212,6 +220,7 @@ const [collapsed, setCollapsed] = useState(false);
                 key={index}
                 style={{
                   height: "100px",
+                  maxWidth:"150px",
                   border: "1px solid #eee",
                   boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
                   borderRadius: "12px",
@@ -237,17 +246,19 @@ const [collapsed, setCollapsed] = useState(false);
                     key={task.id}
                     style={{
                       backgroundColor: getColor(task.priority),
-                      color: "#fff",
+                      overflowWrap: "break-word",
+                      color: "#165A50",
                       padding: "2px 6px",
                       borderRadius: "4px",
                       fontSize: "10px",
+                      fontWeight:"bold",
                       marginTop: "4px",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       whiteSpace: "nowrap",
                     }}
                   >
-                    {task.title}
+                    {task.title} ({task.aspect})
                   </div>
                 ))}
 
