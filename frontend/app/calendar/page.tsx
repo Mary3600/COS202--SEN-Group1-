@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import TaskModal from "../../components/TaskModal";
+import TaskViewModal from "../../components/TaskViewModal";
 
 import Image from "next/image";
 import { Bell, Settings, ChevronLeft, ChevronRight, Search, LayoutDashboard, CalendarDays, ArchiveRestore, Menu, Bold  } from "lucide-react";
@@ -24,7 +25,8 @@ const [tasks, setTasks] = useState([
 
 const [sidebarOpen, setSidebarOpen] = useState(true);
 const [collapsed, setCollapsed] = useState(false);
-  
+const [selectedTask, setSelectedTask] = useState(null);
+const [isViewOpen, setIsViewOpen] = useState(false);  
 
   // CALCULATIONS
   const year = currentDate.getFullYear();
@@ -49,6 +51,16 @@ const [collapsed, setCollapsed] = useState(false);
 
   const handleAddTask = (newTask) => {
   setTasks((prev) => [...prev, newTask]);
+};
+
+const handleDelete = (id) => {
+  setTasks((prev) => prev.filter((t) => t.id !== id));
+  setIsViewOpen(false);
+};
+
+const handleEdit = (task) => {
+  setIsViewOpen(false);
+  setIsModalOpen(true); // reuse your modal
 };
 
   return (
@@ -242,25 +254,25 @@ const fullDate = `${cellYear}-${String(cellMonth + 1).padStart(2, "0")}-${String
                 </div>
 
                 {visibleTasks.map((task) => (
-                  <div
-                    key={task.id}
-                    style={{
-                      backgroundColor: getColor(task.priority),
-                      overflowWrap: "break-word",
-                      color: "#165A50",
-                      padding: "2px 6px",
-                      borderRadius: "4px",
-                      fontSize: "10px",
-                      fontWeight:"bold",
-                      marginTop: "4px",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {task.title} ({task.aspect})
-                  </div>
-                ))}
+  <div
+    key={task.id}
+    onClick={() => {
+      setSelectedTask(task);
+      setIsViewOpen(true);
+    }}
+    style={{
+      backgroundColor: getColor(task.priority),
+      color: "#fff",
+      padding: "2px 6px",
+      borderRadius: "4px",
+      fontSize: "10px",
+      marginTop: "4px",
+      cursor: "pointer",
+    }}
+  >
+    {task.title}
+  </div>
+))}
 
                 {remainingCount > 0 && (
                   <div
@@ -279,11 +291,19 @@ const fullDate = `${cellYear}-${String(cellMonth + 1).padStart(2, "0")}-${String
           })}
         </div>
       </div>
+      
        <TaskModal
       isOpen={isModalOpen}
       onClose={() => setIsModalOpen(false)}
       onAddTask={handleAddTask}
-    />
+    /> <TaskViewModal
+  isOpen={isViewOpen}
+  onClose={() => setIsViewOpen(false)}
+  task={selectedTask}
+  onDelete={handleDelete}
+  onEdit={handleEdit}
+/>
+    
     </div>
   );
 }
