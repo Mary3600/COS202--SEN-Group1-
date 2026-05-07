@@ -287,7 +287,7 @@ const getFontColor = (priority) => {
                       fontSize: "10px",
                       color: isToday ? "#fff" : "#555",
                       marginTop: "4px",
-                      fontWeight: "500",
+                      
                     }}
                   >
                     +{remainingCount} more
