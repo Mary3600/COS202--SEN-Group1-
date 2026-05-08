@@ -1,13 +1,26 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 
-export default function TaskModal({ isOpen, onClose, onAddTask }) {
+export default function TaskModal({
+  isOpen,
+  onClose,
+  onAddTask,
+  editingTask,
+})  {
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
   const [priority, setPriority] = useState("medium"); // ✅ FIXED default
   const [aspect, setAspect] = useState("academic");
   const [error, setError] = useState(""); // ✅ NEW (error handling)
+  useEffect(() => {
+  if (editingTask) {
+    setTitle(editingTask.title);
+    setDate(editingTask.date);
+    setPriority(editingTask.priority);
+    setAspect(editingTask.aspect || "academic");
+  }
+}, [editingTask]);
 
   if (!isOpen) return null;
 
@@ -21,12 +34,12 @@ export default function TaskModal({ isOpen, onClose, onAddTask }) {
     setError("");
 
     onAddTask({
-      id: Date.now(),
-      title,
-      date,
-      priority,
-      aspect, // ✅ FIX 2: now storing aspect
-    });
+  id: editingTask ? editingTask.id : Date.now(),
+  title,
+  date,
+  priority,
+  aspect,
+});
 
     // reset
     setTitle("");

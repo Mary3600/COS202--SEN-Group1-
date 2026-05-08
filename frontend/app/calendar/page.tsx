@@ -10,7 +10,7 @@ import { Bell, Settings, ChevronLeft, ChevronRight, Search, LayoutDashboard, Cal
 export default function CalendarView() {
   const days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
   const [activePage, setActivePage] = useState("calendar");
-  // STATE
+  const [editingTask, setEditingTask] = useState(null);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isModalOpen, setIsModalOpen] = useState(false);
 const [tasks, setTasks] = useState([
@@ -49,8 +49,22 @@ const [isViewOpen, setIsViewOpen] = useState(false);
     setCurrentDate(new Date(year, month - 1, 1));
   };
 
-  const handleAddTask = (newTask) => {
-  setTasks((prev) => [...prev, newTask]);
+ const handleAddTask = (newTask) => {
+  setTasks((prev) => {
+    const existingTask = prev.find(
+      (task) => task.id === newTask.id
+    );
+
+    // EDIT existing task
+    if (existingTask) {
+      return prev.map((task) =>
+        task.id === newTask.id ? newTask : task
+      );
+    }
+
+    // ADD new task
+    return [...prev, newTask];
+  });
 };
 
 const handleDelete = (id) => {
@@ -59,8 +73,9 @@ const handleDelete = (id) => {
 };
 
 const handleEdit = (task) => {
+  setEditingTask(task);
   setIsViewOpen(false);
-  setIsModalOpen(true); // reuse your modal
+  setIsModalOpen(true);
 };
 
   return (
@@ -300,10 +315,15 @@ const getFontColor = (priority) => {
       </div>
       
        <TaskModal
-      isOpen={isModalOpen}
-      onClose={() => setIsModalOpen(false)}
-      onAddTask={handleAddTask}
-    /> <TaskViewModal
+  isOpen={isModalOpen}
+  onClose={() => {
+    setIsModalOpen(false);
+    setEditingTask(null);
+  }}
+  onAddTask={handleAddTask}
+  editingTask={editingTask}
+/>
+ <TaskViewModal
   isOpen={isViewOpen}
   onClose={() => setIsViewOpen(false)}
   task={selectedTask}
