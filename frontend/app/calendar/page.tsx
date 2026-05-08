@@ -300,7 +300,7 @@ const getFontColor = (priority) => {
                   <div
                     style={{
                       fontSize: "10px",
-                      color: isToday ? "#fff" : "#555",
+                      color: isToday ? "#ffff" : "#555",
                       marginTop: "4px",
                       
                     }}
