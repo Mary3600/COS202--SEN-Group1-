@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 //Initial configuration 
 /*{
   // Visit https://aka.ms/tsconfig to read more about this file
@@ -59,4 +60,16 @@
 
     "skipLibCheck": true
   }
+=======
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "strict": true
+  },
+  "include": ["src/**/*"]
+>>>>>>> 400a1e7 (mockup for backend)
 }
