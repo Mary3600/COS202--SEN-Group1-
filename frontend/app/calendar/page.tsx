@@ -104,7 +104,7 @@ const handleEdit = (task) => {
         {!sidebarOpen && (
           <button
             onClick={() => setSidebarOpen(true)}
-            style={{
+            style={{ 
               marginBottom: "20px",
               padding: "6px 10px",
               cursor: "pointer",
