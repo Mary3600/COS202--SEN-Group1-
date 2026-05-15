@@ -22,7 +22,7 @@ const TaskCard = ({ title, priority }: Props) => {
   return (
     <div
       style={{
-        border: "1px solid #e0e0e0",
+        border: "1px solid #ffffff",
         borderRadius: "10px",
         padding: "12px",
         margin: "10px 0",
