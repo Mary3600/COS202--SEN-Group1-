@@ -7,10 +7,17 @@ import TaskViewModal from "../../components/TaskViewModal";
 import Image from "next/image";
 import { Bell, Settings, ChevronLeft, ChevronRight, Search, LayoutDashboard, CalendarDays, ArchiveRestore, Menu, Bold  } from "lucide-react";
 
+interface Task {
+  id: number;
+  title: string;
+  date: string;
+  priority: string;
+}
+
 export default function CalendarView() {
   const days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
   const [activePage, setActivePage] = useState("calendar");
-  const [editingTask, setEditingTask] = useState(null);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isModalOpen, setIsModalOpen] = useState(false);
 const [tasks, setTasks] = useState([
@@ -25,7 +32,7 @@ const [tasks, setTasks] = useState([
 
 const [sidebarOpen, setSidebarOpen] = useState(true);
 const [collapsed, setCollapsed] = useState(false);
-const [selectedTask, setSelectedTask] = useState(null);
+const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 const [isViewOpen, setIsViewOpen] = useState(false);  
 
   // CALCULATIONS
@@ -49,7 +56,7 @@ const [isViewOpen, setIsViewOpen] = useState(false);
     setCurrentDate(new Date(year, month - 1, 1));
   };
 
- const handleAddTask = (newTask) => {
+ const handleAddTask = (newTask:Task) => {
   setTasks((prev) => {
     const existingTask = prev.find(
       (task) => task.id === newTask.id
@@ -67,12 +74,12 @@ const [isViewOpen, setIsViewOpen] = useState(false);
   });
 };
 
-const handleDelete = (id) => {
+const handleDelete = (id:number) => {
   setTasks((prev) => prev.filter((t) => t.id !== id));
   setIsViewOpen(false);
 };
 
-const handleEdit = (task) => {
+const handleEdit = (task:Task) => {
   setEditingTask(task);
   setIsViewOpen(false);
   setIsModalOpen(true);
@@ -230,13 +237,13 @@ const fullDate = `${cellYear}-${String(cellMonth + 1).padStart(2, "0")}-${String
             const visibleTasks = dayTasks.slice(0, 2);
             const remainingCount = dayTasks.length - visibleTasks.length;
 
-            const getColor = (priority) => {
+            const getColor = (priority:string) => {
   if (priority === "high") return "#FFDAD6";
   if (priority === "medium") return "#FDF2D0";
   return "#bbf7d0";
 };
 
-const getFontColor = (priority) => {
+const getFontColor = (priority:string) => {
   if (priority === "high") return "#93000A";
   if (priority === "medium") return "#D4980A";
   return "#2E9E5B";
