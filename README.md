@@ -13,6 +13,7 @@ The Student Task Manager is a web-based application designed to help students or
   | MORAH Somtochukwu | Team Lead |
   | WURAOLA Fatimah | QA/Documentation |
   | OYELUYI Olaoluwasubomi | QA/Documentation |
+  | HARUNA Tayyib | Integration |
 
 ### Core Features
   - Create, edit and delete tasks
@@ -22,21 +23,21 @@ The Student Task Manager is a web-based application designed to help students or
   - Sets priority of tasks with color codes
   - View tasks by status(pending/completed)
 
-## Project Structure
-/frontend
-  /app
-    /calendar page
-  /pages
-  /styles(layout&globals)
+## User Guide
 
+### Creating a Task
+1. Click the “Add Task” button
+2. Enter task title
+3. Select a date
+4. Choose priority
+5. Save task
 
-/backend
-  /prisma
-   /migrations
-    /schema.prisma
-  /src
+### Viewing Tasks
+- Tasks appear on the calendar based on their assigned date
+- Click a task to view details
 
-
+### Navigation
+- Sidebar allows switching between views (Calendar, Dashboard, Archive)
 
 ## Application Pages
 
@@ -115,15 +116,27 @@ Due to portability and deployment challenges associated with local database host
 
 ## Installation & Setup
 
-1. Clone the repository
-2. Navigate into the project directory
-3. Install dependencies
+### 1. Clone Repository
+git clone <repo-url>
 
-```bash
+### 2. Install Frontend Dependencies
+cd frontend
 npm install
 
+### 3. Install Backend Dependencies
+cd backend
+npm install
+
+### 5. Generate Prisma Client
+npx prisma generate
+
+### 6. Run Backend Server
 npm run dev
-```
+
+### 7. Run Frontend
+cd frontend
+npm run dev
+
 
 ## Known Issues
 
@@ -140,48 +153,115 @@ npm run dev
 
 ## QA Findings and Technical Review
 
-### Issues Identified During Testing
-- The calendar uses a fixed number of grid cells, which may not correctly display all months.
-- Task dates are manually constructed as strings, which can cause incorrect task placement in some cases.
-- The "today" highlight may not always be accurate for all calendar cells.
-- Task data is stored only in local state and is not saved permanently.
+## QA Findings (Frontend UI Testing)
 
-### System Limitations
+During functional testing of the Calendar View and task system, the following issues were observed:
 
-- Task data is currently stored in local React state and does not persist across sessions.
-- The application is not yet connected to a backend API.
-- Styling is implemented using inline CSS, which limits scalability and maintainability.
-- Calendar logic is frontend-generated and not dynamically validated from a backend source.
+### Task Persistence Issues
+- Tasks are created successfully and displayed correctly across different calendar months.
+- However, all tasks are stored in local React state and are lost when the page is refreshed.
+- This indicates absence of persistent storage or backend integration for frontend data synchronization.
 
-### Recommended Improvements
+### Task Deletion Limitation
+- There is currently no direct UI flow to delete tasks after creation from the calendar view.
+- Task deletion logic exists in the system but is not fully exposed in the UI flow.
 
-- Replace fixed calendar grid with dynamic 42-cell calendar generation.
-- Refactor date handling using JavaScript Date objects instead of manual string construction.
-- Introduce backend API integration for persistent task storage.
-- Replace inline styles with a scalable styling approach (CSS modules or Tailwind CSS).
+### Navigation Issues
+- Sidebar navigation items such as:
+  - Dashboard
+  - Archive
+  are not yet connected to functional routes or views.
+- Notification and settings icons are currently non-interactive placeholders.
+
+### Form Validation Issue
+- When creating a task:
+  - Missing date input incorrectly triggers validation error on the task title field instead of the date field.
+- This indicates improper field-level validation mapping in the task modal form.
+
+### Multi-task Handling
+- Multiple tasks can successfully be assigned to the same date without conflict.
+- This behavior is correct and supports concurrent task scheduling per day.
+
+### UI/Logic Observations
+- Calendar grid renders correctly and supports multi-month navigation.
+- However, task rendering is dependent on string-based date matching, which may lead to inconsistencies if date formats change.
+
+---
+
+### Summary
+The frontend is functionally stable for task creation and visualization but lacks:
+- persistent storage
+- complete CRUD UI flow
+- proper form validation mapping
+- fully implemented navigation system
 
 
-## QA Findings (Backend API)
+## QA Findings (Backend API Testing)
 
-During testing of the task API, the following issues were observed:
+During API testing and frontend integration review, the following issues were observed:
 
-- The API allows task creation without validating required fields such as title.
-- Invalid or empty request data may still be processed without proper rejection.
-- Task update endpoint does not validate input types for fields like "completed".
-- Invalid task IDs may cause server errors instead of controlled responses.
+### Validation Issues
+- The API allows task creation without strict validation of required fields such as title and date.
+- Empty or malformed payloads are not consistently rejected.
 
-### System Limitations
+### Error Handling Issues
+- Invalid task IDs during update or delete operations may result in unhandled server errors instead of controlled responses.
 
-- Input validation is minimal, making the API vulnerable to incorrect or malformed data.
-- There is no error handling for cases where a task is not found during updates or deletion.
-- Data integrity is fully dependent on client-side correctness.
+### Data Integrity Concerns
+- Backend relies heavily on client-side validation, which increases risk of inconsistent or invalid data storage.
 
-### Recommended Improvements
+### Setup Complexity
+- Backend requires additional setup steps beyond `npm install`, including:
+  - `npx prisma generate`
+  - database configuration via `.env`
+- Missing setup instructions can prevent successful onboarding of new contributors.
 
-- Add validation for required fields (e.g. title must not be empty).
-- Validate request parameters to ensure correct data types.
-- Handle cases where task ID does not exist before updating or deleting.
-- Improve error messages to make API responses clearer for frontend integration.
+### Development Dependencies
+- Additional runtime dependency (`tsx`) is required for development server execution.
+
+---
+
+### Summary
+The backend is structurally complete for CRUD operations but requires:
+- stronger validation layer
+- improved error handling
+- clearer setup documentation
+- tighter integration with frontend validation rules
+
+## System Integration Gaps
+
+During end-to-end testing, the following integration gaps were identified:
+
+- Frontend task state is not connected to backend persistence layer.
+- Task creation, deletion, and updates are not synchronized with the database.
+- Calendar view relies on local mock state instead of real-time API data.
+- Navigation system (Dashboard, Archive, Settings) is not linked to backend or routing logic.
+
+---
+
+### Impact
+These gaps result in:
+- loss of data on refresh
+- incomplete user workflow
+- reduced usability of core features
+
+## Recommended System Improvements
+
+### Frontend Improvements
+- Implement persistent state using backend API integration.
+- Fix form validation mapping for task fields.
+- Connect sidebar navigation to proper routes/pages.
+- Add loading and error states for API interactions.
+
+### Backend Improvements
+- Add strict validation middleware for all task endpoints.
+- Improve error handling for invalid IDs and malformed requests.
+- Ensure consistent response structure across all endpoints.
+
+### System Architecture Improvements
+- Replace local state task storage with API-driven data fetching.
+- Implement real-time sync between frontend and backend.
+- Introduce centralized validation layer shared between frontend and backend.
 
 ## QA Checklist
 
