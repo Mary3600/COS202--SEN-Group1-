@@ -44,6 +44,9 @@ The Student Task Manager is a web-based application designed to help students or
 - Home Page  
   Displays a personalized welcome interface for users.
 
+- Sign Up Page  
+  Allows new users to create an account. UI implementation is complete and backend authentication integration is in progress.
+
 - Task Dashboard  
   Displays all tasks including completed, pending, and upcoming tasks.
 
@@ -66,6 +69,7 @@ The Student Task Manager is a web-based application designed to help students or
 - Upcoming task display
 - Task categorization
 - Task view modal
+- Sign up page UI
 
 ## Features In Progress
 
@@ -74,6 +78,9 @@ The Student Task Manager is a web-based application designed to help students or
 - Task deletion
 - Backend API integration
 - Authentication system
+- Sign up page functionality
+- Frontend merge integration
+- API endpoint implementation
 
 ## Tech Stack
 
@@ -144,12 +151,16 @@ npm run dev
 - Some task operations are incomplete
 - Frontend is currently connected to mock data
 - Prisma configuration and connection setup still being refined
+- Ongoing frontend merge conflicts while integrating new UI work
+- API endpoints still in development
 
 ## Development Workflow
 
 - Features are developed on separate branches
 - Pull requests are reviewed before merging into the main branch
 - GitHub is used for version control and collaboration
+- Frontend team is actively merging completed UI components
+- API endpoints are currently being prepared for integration
 
 ## QA Findings and Technical Review
 
