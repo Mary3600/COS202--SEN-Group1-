@@ -24,7 +24,24 @@ export default function TaskModal({
 
   if (!isOpen) return null;
 
-  const handleSubmit = () => {
+  const createTask = async (taskData) => {
+  try {
+    const res = await fetch("http://localhost:5000/tasks", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(taskData),
+    });
+
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.log("Error creating task:", err);
+  }
+};
+
+  const handleSubmit = async  () => {
     // ✅ FIX 1: validation
     if (!title || !date) {
       setError("Please fill all fields");
@@ -33,13 +50,15 @@ export default function TaskModal({
 
     setError("");
 
-    onAddTask({
-  id: editingTask ? editingTask.id : Date.now(),
+    const newTask = await createTask({
   title,
-  date,
   priority,
-  aspect,
+  category: aspect,
+  dueDate: date,
 });
+
+// optional: sync with parent UI immediately
+onAddTask(newTask);
 
     // reset
     setTitle("");

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "@/components/Sidebar";
 import TaskModal from "../../components/TaskModal";
 import TaskViewModal from "../../components/TaskViewModal";
@@ -20,15 +20,68 @@ export default function CalendarView() {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isModalOpen, setIsModalOpen] = useState(false);
-const [tasks, setTasks] = useState([
-  { id: 1, title: "Assignment", date: "2026-04-12", priority: "high" },
-  { id: 2, title: "Meeting", date: "2026-04-12", priority: "medium" },
-  { id: 3, title: "Gym", date: "2026-04-12", priority: "low" },
-  { id: 4, title: "Project Review", date: "2026-04-15", priority: "high" },
-  { id: 5, title: "Call John", date: "2026-04-16", priority: "medium" },
-  { id: 6, title: "Very Long Task Name To Test Overflow UI", date: "2026-04-20", priority: "low" },
-  { id: 7, title: "Next Month Task", date: "2026-05-02", priority: "high" },
-]);
+
+const [tasks, setTasks] = useState([]);
+
+const deleteTask = async (id: number) => {
+  try {
+    await fetch(`http://localhost:5000/tasks/${id}`, {
+      method: "DELETE",
+    });
+
+    fetchTasks(); // refresh from backend
+    setIsViewOpen(false); // close modal after delete
+  } catch (err) {
+    console.log("Error deleting task:", err);
+  }
+};
+
+useEffect(() => {
+  const fetchTasks = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/tasks");
+      const data = await res.json();
+
+      // ✅ NORMALIZE DATA HERE
+      const formatted = data.map((task) => ({
+        ...task,
+        date: task.dueDate.split("T")[0], // convert to YYYY-MM-DD
+      }));
+
+      setTasks(formatted);
+    } catch (err) {
+      console.log("Error fetching tasks:", err);
+    }
+  };
+  const deleteTask = async (id) => {
+  try {
+    await fetch(`http://localhost:5000/tasks/${id}`, {
+      method: "DELETE",
+    });
+
+    fetchTasks(); // refresh calendar
+  } catch (err) {
+    console.log("Error deleting task:", err);
+  }
+};
+  fetchTasks();
+}, []);
+
+const fetchTasks = async () => {
+  try {
+    const res = await fetch("http://localhost:5000/tasks");
+    const data = await res.json();
+
+    const formatted = data.map((task) => ({
+      ...task,
+      date: task.dueDate.split("T")[0],
+    }));
+
+    setTasks(formatted);
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 const [sidebarOpen, setSidebarOpen] = useState(true);
 const [collapsed, setCollapsed] = useState(false);
@@ -327,7 +380,7 @@ const getFontColor = (priority:string) => {
     setIsModalOpen(false);
     setEditingTask(null);
   }}
-  onAddTask={handleAddTask}
+  onAddTask={fetchTasks}
   editingTask={editingTask}
 />
  <TaskViewModal
