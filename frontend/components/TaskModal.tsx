@@ -41,6 +41,22 @@ export default function TaskModal({
   }
 };
 
+const updateTask = async (id, taskData) => {
+  try {
+    const res = await fetch(`http://localhost:5000/tasks/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(taskData),
+    });
+
+    return await res.json();
+  } catch (err) {
+    console.log("Error updating task:", err);
+  }
+};
+
   const handleSubmit = async  () => {
     // ✅ FIX 1: validation
     if (!title || !date) {
@@ -50,15 +66,25 @@ export default function TaskModal({
 
     setError("");
 
-    const newTask = await createTask({
-  title,
-  priority,
-  category: aspect,
-  dueDate: date,
-});
+    let taskResult;
 
-// optional: sync with parent UI immediately
-onAddTask(newTask);
+if (editingTask) {
+  taskResult = await updateTask(editingTask.id, {
+    title,
+    priority,
+    category: aspect,
+    dueDate: date,
+  });
+} else {
+  taskResult = await createTask({
+    title,
+    priority,
+    category: aspect,
+    dueDate: date,
+  });
+}
+
+onAddTask(taskResult);
 
     // reset
     setTitle("");
@@ -272,7 +298,7 @@ onAddTask(newTask);
               cursor: "pointer",
             }}
           >
-            Add Task
+            {editingTask ? "Update Task" : "Add Task"}
           </button>
         </div>
       </div>

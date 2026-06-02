@@ -53,17 +53,7 @@ useEffect(() => {
       console.log("Error fetching tasks:", err);
     }
   };
-  const deleteTask = async (id) => {
-  try {
-    await fetch(`http://localhost:5000/tasks/${id}`, {
-      method: "DELETE",
-    });
-
-    fetchTasks(); // refresh calendar
-  } catch (err) {
-    console.log("Error deleting task:", err);
-  }
-};
+  
   fetchTasks();
 }, []);
 
@@ -127,10 +117,6 @@ const [isViewOpen, setIsViewOpen] = useState(false);
   });
 };
 
-const handleDelete = (id:number) => {
-  setTasks((prev) => prev.filter((t) => t.id !== id));
-  setIsViewOpen(false);
-};
 
 const handleEdit = (task:Task) => {
   setEditingTask(task);
@@ -387,7 +373,7 @@ const getFontColor = (priority:string) => {
   isOpen={isViewOpen}
   onClose={() => setIsViewOpen(false)}
   task={selectedTask}
-  onDelete={handleDelete}
+  onDelete={deleteTask}
   onEdit={handleEdit}
 />
     
