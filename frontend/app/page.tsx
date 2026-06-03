@@ -1,10 +1,8 @@
-import AppLayout from "../src/components/AppLayout";
-import TaskList from "../src/components/TaskList";
+import AppLayout from "../components/AppLayout";
+import TaskList from "../components/TaskList";
 
 export default function Page() {
-  return (
-    
-      <TaskList />
+  return <TaskList />;
   
-  );
+  
 }

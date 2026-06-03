@@ -1,4 +1,5 @@
 import "./globals.css";
+import AppLayout from "../components/AppLayout";
 
 export const metadata = {
   title: "Momento Dashboard",
@@ -12,7 +13,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <AppLayout>{children}</AppLayout>
+      </body>
     </html>
   );
 }

@@ -1,4 +1,4 @@
-import CompletedTasks from "../../src/components/CompletedTasks";
+import CompletedTasks from "../../components/CompletedTasks";
 
 export default function Page() {
   return <CompletedTasks />;
