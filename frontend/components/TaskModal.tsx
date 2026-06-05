@@ -1,20 +1,21 @@
 "use client";
 import { useState, useEffect } from "react";
-import Image from "next/image";
 
+// 1. Prisma Task Type Definition
 interface Task {
-  id?: string | number; 
+  id: string | number; // Prisma objects use clean string hashes or auto-incrementing ints
   title: string;
   priority: "low" | "medium" | "high" | string;
-  aspect: string;
-  date: string;
+  category: string;    
+  dueDate: string;     
+  date?: string;       
 }
 
 interface TaskModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAddTask: (taskData: any) => void; 
-  editingTask: Task | null;
+  editingTask: any | null; 
 }
 
 export default function TaskModal({
@@ -22,105 +23,113 @@ export default function TaskModal({
   onClose,
   onAddTask,
   editingTask,
-}:TaskModalProps)  {
+}: TaskModalProps)  {
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
-  const [priority, setPriority] = useState("medium"); // ✅ FIXED default
+  const [priority, setPriority] = useState("medium"); 
   const [aspect, setAspect] = useState("academic");
-  const [error, setError] = useState(""); // ✅ NEW (error handling)
+  const [error, setError] = useState(""); 
+
   useEffect(() => {
-  if (editingTask) {
-    setTitle(editingTask.title);
-    setDate(editingTask.date);
-    setPriority(editingTask.priority);
-    setAspect(editingTask.aspect || "academic");
-  }
-}, [editingTask]);
+    if (editingTask) {
+      setTitle(editingTask.title);
+      setDate(editingTask.date || editingTask.dueDate?.split("T")[0] || "");
+      setPriority(editingTask.priority);
+      setAspect(editingTask.category || editingTask.aspect || "academic");
+    }
+  }, [editingTask]);
 
   if (!isOpen) return null;
 
+  // 2. Prisma Create Expectation: Omit the database-managed 'id'
   const createTask = async (taskData: Omit<Task, "id">) => {
-  try {
-    const res = await fetch("http://localhost:5000/tasks", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(taskData),
-    });
+    try {
+      const res = await fetch("http://localhost:5000/tasks", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(taskData),
+      });
 
-    const data = await res.json();
-    return data;
-  } catch (err) {
-    console.log("Error creating task:", err);
-  }
-};
-
-const updateTask = async (id: string | number, taskData: Partial<Task>) => {
-  try {
-    const res = await fetch(`http://localhost:5000/tasks/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(taskData),
-    });
-
-    return await res.json();
-  } catch (err) {
-    console.log("Error updating task:", err);
-  }
-};
-
-  const handleSubmit = async () => {
-  if (!title || !date) {
-    setError("Please fill all fields");
-    return;
-  }
-
-  setError("");
-
-  const taskPayload = {
-    title,
-    priority,
-    category: aspect,
-    dueDate: date,
+      return await res.json();
+    } catch (err) {
+      console.log("Prisma Create error:", err);
+    }
   };
 
-  let taskResult;
+  // 3. Prisma Update Expectation: Match target ID and supply partial details
+  const updateTask = async (id: string | number, taskData: Partial<Omit<Task, "id">>) => {
+    try {
+      const res = await fetch(`http://localhost:5000/tasks/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(taskData),
+      });
 
-  try {
-    if (editingTask) {
-      taskResult = await updateTask(editingTask.id, taskPayload);
-    } else {
-      taskResult = await createTask(taskPayload);
+      return await res.json();
+    } catch (err) {
+      console.log("Prisma Update error:", err);
     }
+  };
 
-    if (!taskResult) {
-      setError("Something went wrong. Try again.");
+  const handleSubmit = async () => {
+    if (!title || !date) {
+      setError("Please fill all fields");
       return;
     }
 
-    onAddTask({
-      ...taskResult,
-      date: taskResult.dueDate?.split("T")[0],
-    });
+    setError("");
 
-    setTitle("");
-    setDate("");
-    setPriority("medium");
-    setAspect("academic");
+    // Your Prisma-mapped request body variables 
+    const taskPayload = {
+      title,
+      priority,
+      category: aspect,
+      dueDate: date,
+    };
 
-    onClose();
-  } catch (err) {
-    console.log("Submit error:", err);
-    setError("Network error");
-  }
-};
+    let taskResult;
+
+    try {
+      if (editingTask) {
+        const taskId = editingTask.id; // Prisma unifies identifiers under '.id'
+        if (!taskId) {
+          setError("Task ID not found.");
+          return;
+        }
+        taskResult = await updateTask(taskId, taskPayload);
+      } else {
+        taskResult = await createTask(taskPayload);
+      }
+
+      if (!taskResult) {
+        setError("Something went wrong. Try again.");
+        return;
+      }
+
+      onAddTask({
+        ...taskResult,
+        date: taskResult.dueDate?.split("T")[0],
+      });
+
+      setTitle("");
+      setDate("");
+      setPriority("medium");
+      setAspect("academic");
+
+      onClose();
+    } catch (err) {
+      console.log("Submit error:", err);
+      setError("Network error");
+    }
+  };
 
   return (
     <div
-      onClick={onClose} // ✅ FIX 3: click outside to close
+      onClick={onClose} 
       style={{
         position: "fixed",
         top: 0,
@@ -136,7 +145,7 @@ const updateTask = async (id: string | number, taskData: Partial<Task>) => {
       }}
     >
       <div
-        onClick={(e) => e.stopPropagation()} // ✅ prevent closing when clicking inside
+        onClick={(e) => e.stopPropagation()} 
         style={{
           background: "#fff",
           padding: "20px 32px 32px 32px",
@@ -172,7 +181,6 @@ const updateTask = async (id: string | number, taskData: Partial<Task>) => {
           onChange={(e) => setTitle(e.target.value)}
         />
 
-        {/* ✅ ERROR MESSAGE */}
         {error && (
           <p style={{ color: "red", fontSize: "12px", marginTop: "-10px" }}>
             {error}
@@ -257,7 +265,7 @@ const updateTask = async (id: string | number, taskData: Partial<Task>) => {
           />
         </div>
 
-        {/* IMAGE */}
+        {/* BANNER IMAGE */}
         <div
           style={{
             width: "100%",
@@ -300,12 +308,14 @@ const updateTask = async (id: string | number, taskData: Partial<Task>) => {
         >
           <button
             onClick={onClose}
+            type="button"
             style={{
               padding: "5px 20px",
               borderRadius: "15px",
               background: "#FF4B33",
               color: "white",
               cursor: "pointer",
+              border: "none"
             }}
           >
             Cancel
@@ -313,12 +323,14 @@ const updateTask = async (id: string | number, taskData: Partial<Task>) => {
 
           <button
             onClick={handleSubmit}
+            type="button"
             style={{
               padding: "5px 20px",
               borderRadius: "15px",
               background: "#165A50",
               color: "white",
               cursor: "pointer",
+              border: "none"
             }}
           >
             {editingTask ? "Update Task" : "Add Task"}
