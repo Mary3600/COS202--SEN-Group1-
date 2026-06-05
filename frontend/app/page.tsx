@@ -5,9 +5,48 @@ import Image from "next/image";
 
 export default function Home() {
   const [isLogin, setIsLogin] = useState(false);
-  const [name, setName] = useState("");
+  
 const [email, setEmail] = useState("");
 const [password, setPassword] = useState("");
+
+const handleAuth = async () => {
+  try {
+    const endpoint = isLogin
+      ? "http://localhost:5000/login"
+      : "http://localhost:5000/register";
+
+    const payload = isLogin
+      ? { email, password }
+      : { email, password };
+
+    const res = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+    if (data.token) {
+  localStorage.setItem("token", data.token);
+}
+
+    console.log(data);
+
+    if (!res.ok) {
+      alert(data.message || "Something went wrong");
+      return;
+    }
+
+alert(isLogin ? "Login successful!" : "Account created!");
+
+window.location.href = "/tasklist";
+  } catch (err) {
+    console.error(err);
+    alert("Server connection failed");
+  }
+};
 
   return (
     <div
@@ -100,22 +139,26 @@ const [password, setPassword] = useState("");
               : "Start organizing your tasks and goals."}
           </p>
 
-          {!isLogin && (
-            <input
-              type="text"
-              placeholder="Full Name"
-              style={inputStyle}
-            />
-          )}
+          
+          <input
+  type="email"
+  placeholder="Email"
+  style={inputStyle}
+  value={email}
+  onChange={(e) => setEmail(e.target.value)}
+/>
 
           <input
-            type="password"
-            placeholder="Password"
-            style={inputStyle}
-          />
+  type="password"
+  placeholder="Password"
+  style={inputStyle}
+  value={password}
+  onChange={(e) => setPassword(e.target.value)}
+/>
 
           <button
-            style={{
+  onClick={handleAuth}
+  style={{
               height: "50px",
               border: "none",
               borderRadius: "12px",
