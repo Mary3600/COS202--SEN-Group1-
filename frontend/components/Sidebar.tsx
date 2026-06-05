@@ -82,8 +82,8 @@ export default function Sidebar({
             gap: "10px",
             justifyContent: collapsed ? "center" : "flex-start",
             cursor: "pointer",
-            color: activePage === "dashboard" ? "#165A50" : "#64748B",
-            fontWeight: activePage === "dashboard" ? "bold" : "normal",
+            color: activePage === "tasklist" ? "#165A50" : "#64748B",
+            fontWeight: activePage === "tasklist" ? "bold" : "normal",
           }}
         >
           <LayoutDashboard size={20} />
@@ -122,8 +122,8 @@ export default function Sidebar({
             gap: "10px",
             justifyContent: collapsed ? "center" : "flex-start",
             cursor: "pointer",
-            color: activePage === "archive" ? "#165A50" : "#64748B",
-            fontWeight: activePage === "archive" ? "bold" : "normal",
+            color: activePage === "completed" ? "#165A50" : "#64748B",
+            fontWeight: activePage === "completed" ? "bold" : "normal",
           }}
         >
           <ArchiveRestore size={20} />

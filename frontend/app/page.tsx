@@ -28,6 +28,9 @@ const handleAuth = async () => {
     });
 
     const data = await res.json();
+    if (data.token) {
+  localStorage.setItem("token", data.token);
+}
 
     console.log(data);
 
@@ -36,8 +39,9 @@ const handleAuth = async () => {
       return;
     }
 
-    alert(isLogin ? "Login successful!" : "Account created!");
+alert(isLogin ? "Login successful!" : "Account created!");
 
+window.location.href = "/tasklist";
   } catch (err) {
     console.error(err);
     alert("Server connection failed");
