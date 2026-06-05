@@ -2,13 +2,28 @@
 import { useState } from "react";
 import {  CalendarDays  } from "lucide-react";
 
+interface TaskViewModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  task: { 
+    id: string | number; 
+    priority: string; 
+    title: string;
+    aspect?: string;
+    date: string;
+    [key: string]: any; 
+  } | null;
+  onDelete: (id: string | number) => void; 
+  onEdit: (task: any) => void;
+}
+
 export default function TaskViewModal({
   isOpen,
   onClose,
   task,
   onDelete,
   onEdit,
-}) {
+}:TaskViewModalProps) {
   if (!isOpen || !task) return null;
 
   // priority color (soft like we updated)

@@ -2,12 +2,27 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 
+interface Task {
+  id?: string | number; 
+  title: string;
+  priority: "low" | "medium" | "high" | string;
+  aspect: string;
+  date: string;
+}
+
+interface TaskModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onAddTask: (taskData: any) => void; 
+  editingTask: Task | null;
+}
+
 export default function TaskModal({
   isOpen,
   onClose,
   onAddTask,
   editingTask,
-})  {
+}:TaskModalProps)  {
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
   const [priority, setPriority] = useState("medium"); // ✅ FIXED default
@@ -24,31 +39,84 @@ export default function TaskModal({
 
   if (!isOpen) return null;
 
-  const handleSubmit = () => {
-    // ✅ FIX 1: validation
-    if (!title || !date) {
-      setError("Please fill all fields");
+  const createTask = async (taskData: Omit<Task, "id">) => {
+  try {
+    const res = await fetch("http://localhost:5000/tasks", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(taskData),
+    });
+
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.log("Error creating task:", err);
+  }
+};
+
+const updateTask = async (id: string | number, taskData: Partial<Task>) => {
+  try {
+    const res = await fetch(`http://localhost:5000/tasks/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(taskData),
+    });
+
+    return await res.json();
+  } catch (err) {
+    console.log("Error updating task:", err);
+  }
+};
+
+  const handleSubmit = async () => {
+  if (!title || !date) {
+    setError("Please fill all fields");
+    return;
+  }
+
+  setError("");
+
+  const taskPayload = {
+    title,
+    priority,
+    category: aspect,
+    dueDate: date,
+  };
+
+  let taskResult;
+
+  try {
+    if (editingTask) {
+      taskResult = await updateTask(editingTask.id, taskPayload);
+    } else {
+      taskResult = await createTask(taskPayload);
+    }
+
+    if (!taskResult) {
+      setError("Something went wrong. Try again.");
       return;
     }
 
-    setError("");
-
     onAddTask({
-  id: editingTask ? editingTask.id : Date.now(),
-  title,
-  date,
-  priority,
-  aspect,
-});
+      ...taskResult,
+      date: taskResult.dueDate?.split("T")[0],
+    });
 
-    // reset
     setTitle("");
     setDate("");
     setPriority("medium");
     setAspect("academic");
 
     onClose();
-  };
+  } catch (err) {
+    console.log("Submit error:", err);
+    setError("Network error");
+  }
+};
 
   return (
     <div
@@ -253,7 +321,7 @@ export default function TaskModal({
               cursor: "pointer",
             }}
           >
-            Add Task
+            {editingTask ? "Update Task" : "Add Task"}
           </button>
         </div>
       </div>

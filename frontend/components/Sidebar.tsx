@@ -1,5 +1,7 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   CalendarDays,
@@ -7,15 +9,22 @@ import {
   Menu,
 } from "lucide-react";
 
+interface SidebarProps {
+  sidebarOpen: boolean;
+  setSidebarOpen: (open: boolean) => void;
+  collapsed: boolean;
+  setCollapsed: (collapsed: boolean) => void;
+  openModal: () => void;
+}
+
 export default function Sidebar({
   sidebarOpen,
   setSidebarOpen,
   collapsed,
   setCollapsed,
-  activePage,
-  setActivePage,
   openModal,
-}) {
+}:SidebarProps) {
+  const pathname = usePathname();
 
     if (!sidebarOpen) return null;
 
@@ -68,55 +77,59 @@ export default function Sidebar({
       {/* NAV ITEMS */}
       <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
         {/* DASHBOARD */}
+        <Link 
+          href="/dashboard" 
+          style={{ textDecoration: "none" }} 
+        >
         <div
-          onClick={() => setActivePage("dashboard")}
           style={{
             display: "flex",
             alignItems: "center",
             gap: "10px",
             justifyContent: collapsed ? "center" : "flex-start",
             cursor: "pointer",
-            color: activePage === "dashboard" ? "#165A50" : "#64748B",
-            fontWeight: activePage === "dashboard" ? "bold" : "normal",
+            color: pathname === "/dashboard" ? "#165A50" : "#64748B",
+            fontWeight: pathname === "/dashboard" ? "bold" : "normal",
           }}
         >
           <LayoutDashboard size={20} />
           {!collapsed && <span>Dashboard</span>}
         </div>
-
+        </Link>
         {/* CALENDAR */}
+        <Link href="/calendar" style={{ textDecoration: "none" }}>
         <div
-          onClick={() => setActivePage("calendar")}
           style={{
             display: "flex",
             alignItems: "center",
             gap: "10px",
             justifyContent: collapsed ? "center" : "flex-start",
             cursor: "pointer",
-            color: activePage === "calendar" ? "#165A50" : "#64748B",
-            fontWeight: activePage === "calendar" ? "bold" : "normal",
+            color: pathname === "/calendar" ? "#165A50" : "#64748B",
+            fontWeight: pathname === "/calendar" ? "bold" : "normal",
           }}
         >
           <CalendarDays size={20} />
           {!collapsed && <span>Calendar</span>}
         </div>
-
+        </Link>
         {/* ARCHIVE */}
+        <Link href="/archive" style={{ textDecoration: "none" }}>
         <div
-          onClick={() => setActivePage("archive")}
           style={{
             display: "flex",
             alignItems: "center",
             gap: "10px",
             justifyContent: collapsed ? "center" : "flex-start",
             cursor: "pointer",
-            color: activePage === "archive" ? "#165A50" : "#64748B",
-            fontWeight: activePage === "archive" ? "bold" : "normal",
+            color: pathname === "/archive" ? "#165A50" : "#64748B",
+              fontWeight: pathname === "/archive" ? "bold" : "normal",
           }}
         >
           <ArchiveRestore size={20} />
           {!collapsed && <span>Archive</span>}
         </div>
+        </Link>
       </div>
 
       {/* ADD TASK BUTTON */}
