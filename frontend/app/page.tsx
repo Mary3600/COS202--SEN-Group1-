@@ -5,7 +5,7 @@ import Image from "next/image";
 
 export default function Home() {
   const [isLogin, setIsLogin] = useState(false);
-  const [name, setName] = useState("");
+  
 const [email, setEmail] = useState("");
 const [password, setPassword] = useState("");
 
@@ -17,7 +17,7 @@ const handleAuth = async () => {
 
     const payload = isLogin
       ? { email, password }
-      : { name, email, password };
+      : { email, password };
 
     const res = await fetch(endpoint, {
       method: "POST",
@@ -135,16 +135,7 @@ const handleAuth = async () => {
               : "Start organizing your tasks and goals."}
           </p>
 
-          {!isLogin && (
-            <input
-  type="text"
-  placeholder="Full Name"
-  style={inputStyle}
-  value={name}
-  onChange={(e) => setName(e.target.value)}
-/>
-
-          )}
+          
           <input
   type="email"
   placeholder="Email"
