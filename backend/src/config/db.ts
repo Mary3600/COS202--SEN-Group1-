@@ -1,13 +1,13 @@
-import mongoose from "mongoose";
+//import mongoose from "mongoose";
 
-const connectDB = async (): Promise<void> => {
-  try {
-    await mongoose.connect("mongodb://127.0.0.1:27017/taskmanager");
-    console.log("MongoDB Connected");
-  } catch (error) {
-    console.error(error);
-    process.exit(1);
-  }
-};
+//const connectDB = async (): Promise<void> => {
+ // try {
+   // await mongoose.connect("mongodb://127.0.0.1:27017/taskmanager");
+    //console.log("MongoDB Connected");
+  //} catch (error) {
+//  console.error(error);
+  //  process.exit(1);
+  //}
+//};
 
-export default connectDB;
+//export default connectDB;
