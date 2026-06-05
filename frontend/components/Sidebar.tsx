@@ -1,4 +1,5 @@
 "use client";
+
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
@@ -8,8 +9,17 @@ import {
   Menu,
 } from "lucide-react";
 
+type SidebarProps = {
+  sidebarOpen: boolean;
+  setSidebarOpen: (value: boolean) => void;
+  collapsed: boolean;
+  setCollapsed: (value: boolean) => void;
+  activePage: string;
+  setActivePage: (value: string) => void;
+  openModal: () => void;
+};
+
 export default function Sidebar({
-  
   sidebarOpen,
   setSidebarOpen,
   collapsed,
@@ -17,10 +27,10 @@ export default function Sidebar({
   activePage,
   setActivePage,
   openModal,
-}) {
-    const router = useRouter();
+}: SidebarProps) {
+  const router = useRouter();
 
-    if (!sidebarOpen) return null;
+  if (!sidebarOpen) return null;
 
   return (
     <div
@@ -34,7 +44,7 @@ export default function Sidebar({
         gap: "20px",
       }}
     >
-      {/* TOP (Logo + toggle) */}
+      {/* TOP */}
       <div
         style={{
           display: "flex",
@@ -48,13 +58,7 @@ export default function Sidebar({
             <Image src="/Momento.jpeg" alt="Logo" width={50} height={50} />
             <div>
               <p style={{ fontWeight: "bold", color: "#165A50" }}>Momento</p>
-              <p
-                style={{
-                  fontSize: "11px",
-                  paddingTop: "3px",
-                  color: "#64748B",
-                }}
-              >
+              <p style={{ fontSize: "11px", color: "#64748B" }}>
                 THE MINDFUL SCHOLAR
               </p>
             </div>
@@ -70,12 +74,13 @@ export default function Sidebar({
 
       {/* NAV ITEMS */}
       <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-        {/* DASHBOARD */}
+
+        {/* TASK LIST */}
         <div
           onClick={() => {
-  setActivePage("tasklist");
-  router.push("/tasklist");
-}}
+            setActivePage("tasklist");
+            router.push("/tasklist");
+          }}
           style={{
             display: "flex",
             alignItems: "center",
@@ -93,9 +98,9 @@ export default function Sidebar({
         {/* CALENDAR */}
         <div
           onClick={() => {
-  setActivePage("calendar");
-  router.push("/calendar");
-}}
+            setActivePage("calendar");
+            router.push("/calendar");
+          }}
           style={{
             display: "flex",
             alignItems: "center",
@@ -110,12 +115,12 @@ export default function Sidebar({
           {!collapsed && <span>Calendar</span>}
         </div>
 
-        {/* ARCHIVE */}
+        {/* COMPLETED */}
         <div
-         onClick={() => {
-  setActivePage("completed");
-  router.push("/completed");
-}}
+          onClick={() => {
+            setActivePage("completed");
+            router.push("/completed");
+          }}
           style={{
             display: "flex",
             alignItems: "center",
@@ -131,23 +136,22 @@ export default function Sidebar({
         </div>
       </div>
 
-      {/* ADD TASK BUTTON */}
+      {/* ADD TASK */}
       <div style={{ marginTop: "auto" }}>
         <button
           style={{
             width: "100%",
             padding: "10px",
             borderRadius: "8px",
-            border: "none", // 👈 FIXED (you had "20px" which is wrong)
+            border: "none",
             backgroundColor: "#165A50",
             color: "#fff",
             fontWeight: "bold",
             cursor: "pointer",
           }}
-         onClick={openModal}
+          onClick={openModal}
         >
           {collapsed ? "+" : "+ Add Task"}
-          
         </button>
       </div>
     </div>

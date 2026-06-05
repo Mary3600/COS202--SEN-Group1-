@@ -1,118 +1,105 @@
 "use client";
+
 import { useState, useEffect } from "react";
-import Image from "next/image";
 
 export default function TaskModal({
   isOpen,
   onClose,
   onAddTask,
   editingTask,
-})  {
+}: any) {
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
-  const [priority, setPriority] = useState("medium"); // ✅ FIXED default
+  const [priority, setPriority] = useState("medium");
   const [aspect, setAspect] = useState("academic");
-  const [error, setError] = useState(""); // ✅ NEW (error handling)
+  const [error, setError] = useState("");
+
+  // ✅ FIX: properly sync edit vs create mode
   useEffect(() => {
-  if (editingTask) {
-    setTitle(editingTask.title);
-    setDate(editingTask.date);
-    setPriority(editingTask.priority);
-    setAspect(editingTask.aspect || "academic");
-  }
-}, [editingTask]);
+    if (editingTask) {
+      setTitle(editingTask.title || "");
+      setDate(editingTask.date || "");
+      setPriority(editingTask.priority || "medium");
+      setAspect(editingTask.aspect || editingTask.category || "academic");
+    } else {
+      // reset when switching to "add mode"
+      setTitle("");
+      setDate("");
+      setPriority("medium");
+      setAspect("academic");
+      setError("");
+    }
+  }, [editingTask, isOpen]);
 
   if (!isOpen) return null;
 
-  const createTask = async (taskData) => {
-  try {
+  const createTask = async (taskData: any) => {
     const res = await fetch("http://localhost:5000/tasks", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(taskData),
-    });
-
-    const data = await res.json();
-    return data;
-  } catch (err) {
-    console.log("Error creating task:", err);
-  }
-};
-
-const updateTask = async (id, taskData) => {
-  try {
-    const res = await fetch(`http://localhost:5000/tasks/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(taskData),
     });
 
     return await res.json();
-  } catch (err) {
-    console.log("Error updating task:", err);
-  }
-};
-
-  const handleSubmit = async () => {
-  if (!title || !date) {
-    setError("Please fill all fields");
-    return;
-  }
-
-  setError("");
-
-  const taskPayload = {
-    title,
-    priority,
-    category: aspect,
-    dueDate: date,
   };
 
-  let taskResult;
+  const updateTask = async (id: number, taskData: any) => {
+    const res = await fetch(`http://localhost:5000/tasks/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(taskData),
+    });
 
-  try {
-    if (editingTask) {
-      taskResult = await updateTask(editingTask.id, taskPayload);
-    } else {
-      taskResult = await createTask(taskPayload);
-    }
+    return await res.json();
+  };
 
-    if (!taskResult) {
-      setError("Something went wrong. Try again.");
+  const handleSubmit = async () => {
+    if (!title || !date) {
+      setError("Please fill all fields");
       return;
     }
 
-    onAddTask({
-      ...taskResult,
-      date: taskResult.dueDate?.split("T")[0],
-    });
+    setError("");
 
-    setTitle("");
-    setDate("");
-    setPriority("medium");
-    setAspect("academic");
+    const taskPayload = {
+      title,
+      priority,
+      aspect, // ✅ FIX: use consistent field name
+      dueDate: date,
+    };
 
-    onClose();
-  } catch (err) {
-    console.log("Submit error:", err);
-    setError("Network error");
-  }
-};
+    try {
+      let result;
+
+      if (editingTask) {
+        result = await updateTask(editingTask.id, taskPayload);
+      } else {
+        result = await createTask(taskPayload);
+      }
+
+      if (!result) {
+        setError("Something went wrong");
+        return;
+      }
+
+      onAddTask({
+        ...result,
+        date: result.dueDate?.split("T")[0],
+      });
+
+      onClose();
+    } catch (err) {
+      console.log(err);
+      setError("Network error");
+    }
+  };
 
   return (
     <div
-      onClick={onClose} // ✅ FIX 3: click outside to close
+      onClick={onClose}
       style={{
         position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100%",
-        color: "black",
-        height: "100%",
+        inset: 0,
         backgroundColor: "rgba(0,0,0,0.3)",
         display: "flex",
         alignItems: "center",
@@ -121,192 +108,104 @@ const updateTask = async (id, taskData) => {
       }}
     >
       <div
-        onClick={(e) => e.stopPropagation()} // ✅ prevent closing when clicking inside
+        onClick={(e) => e.stopPropagation()}
         style={{
           background: "#fff",
-          padding: "20px 32px 32px 32px",
-          boxShadow: "0 15px 40px rgba(0,0,0,0.15)",
-          borderRadius: "10px",
+          padding: "24px",
+          borderRadius: "12px",
           width: "500px",
-          height: "600px",
           display: "flex",
           flexDirection: "column",
-          gap: "20px",
+          gap: "15px",
         }}
       >
-        <h3 style={{ color: '#165A50', fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: "bold" }}>
-          New Entry
+        <h3 style={{ color: "#165A50", fontWeight: "bold" }}>
+          {editingTask ? "Update Task" : "New Task"}
         </h3>
 
-        <p style={{ color: "#BFC9C5", fontWeight: "700" }}>
-          What do you need to remember?
-        </p>
-
         <textarea
+          placeholder="Description"
+          value={title}
+          onChange={(e) => {
+            setTitle(e.target.value);
+            setError("");
+          }}
           style={{
             background: "#F2F4F3",
-            borderRadius: "12px",
-            height: "80px",
             border: "none",
             padding: "10px",
-            fontSize: "15px",
-            resize: "none",
+            borderRadius: "10px",
           }}
-          placeholder="Description / Notes"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
         />
 
-        {/* ✅ ERROR MESSAGE */}
         {error && (
-          <p style={{ color: "red", fontSize: "12px", marginTop: "-10px" }}>
-            {error}
-          </p>
+          <p style={{ color: "red", fontSize: "12px" }}>{error}</p>
         )}
 
         {/* PRIORITY */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-          <p style={{ color: "#BFC9C5", fontWeight: "700" }}>Priority</p>
-
-          <div style={{ display: "flex", gap: "10px" }}>
-            {["low", "medium", "high"].map((level) => (
-              <div
-                key={level}
-                onClick={() => setPriority(level)}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "4px",
-                  padding: "6px 10px",
-                  borderRadius: "20px",
-                  border: "1.5px solid #e2e8f0",
-                  cursor: "pointer",
-                  backgroundColor: priority === level ? "#e2e8f0" : "transparent",
-                }}
-              >
-                <div
-                  style={{
-                    width: "10px",
-                    height: "10px",
-                    borderRadius: "50%",
-                    backgroundColor:
-                      level === "high"
-                        ? "#de2e2e"
-                        : level === "medium"
-                        ? "#fbb128"
-                        : "#3ceb42",
-                  }}
-                />
-                <span style={{ fontSize: "14px" }}>{level}</span>
-              </div>
-            ))}
-          </div>
+        <div style={{ display: "flex", gap: "10px" }}>
+          {["low", "medium", "high"].map((level) => (
+            <div
+              key={level}
+              onClick={() => setPriority(level)}
+              style={{
+                padding: "6px 10px",
+                borderRadius: "20px",
+                cursor: "pointer",
+                background:
+                  priority === level ? "#e2e8f0" : "transparent",
+                border: "1px solid #ddd",
+              }}
+            >
+              {level}
+            </div>
+          ))}
         </div>
 
         {/* ASPECT */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-          <p style={{ color: "#BFC9C5", fontWeight: "700" }}>Aspect</p>
-          <select
-            value={aspect}
-            onChange={(e) => setAspect(e.target.value)}
-            style={{
-              background: "#F2F4F3",
-              border: "none",
-              borderRadius: "8px",
-              padding: "8px",
-              fontSize: "14px",
-              outline: "none",
-              width: "100%",
-            }}
-          >
-            <option value="academic">Academic</option>
-            <option value="personal">Personal</option>
-          </select>
-        </div>
+        <select
+          value={aspect}
+          onChange={(e) => setAspect(e.target.value)}
+          style={{
+            padding: "8px",
+            background: "#F2F4F3",
+            border: "none",
+            borderRadius: "8px",
+          }}
+        >
+          <option value="academic">Academic</option>
+          <option value="personal">Personal</option>
+        </select>
 
         {/* DATE */}
-        <div>
-          <p style={{ color: "#BFC9C5", fontWeight: "700" }}>When?</p>
-          <input
-            style={{
-              width: "100%",
-              outline: "none",
-              border: "none",
-              height: "50px",
-              background: "#F2F4F3",
-              padding: "10px",
-            }}
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          />
-        </div>
-
-        {/* IMAGE */}
-        <div
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
           style={{
-            width: "100%",
-            height: "120px",
-            borderRadius: "16px",
-            overflow: "hidden",
-            position: "relative",
+            padding: "10px",
+            background: "#F2F4F3",
+            border: "none",
+            borderRadius: "8px",
           }}
-        >
-          <img
-            src="/notebook.jpg"
-            alt="banner"
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-            }}
-          />
-
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              background:
-                "linear-gradient(to right, rgba(22,90,80,0.6), rgba(0,0,0,0.2))",
-            }}
-          />
-        </div>
+        />
 
         {/* BUTTONS */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginTop: "5px",
-          }}
-        >
-          <button
-            onClick={onClose}
-            style={{
-              padding: "5px 20px",
-              borderRadius: "15px",
-              background: "#FF4B33",
-              color: "white",
-              cursor: "pointer",
-            }}
-          >
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <button onClick={onClose} style={{ color: "red" }}>
             Cancel
           </button>
 
           <button
             onClick={handleSubmit}
             style={{
-              padding: "5px 20px",
-              borderRadius: "15px",
               background: "#165A50",
               color: "white",
-              cursor: "pointer",
+              padding: "8px 16px",
+              borderRadius: "10px",
             }}
           >
-            {editingTask ? "Update Task" : "Add Task"}
+            {editingTask ? "Update" : "Add"}
           </button>
         </div>
       </div>
