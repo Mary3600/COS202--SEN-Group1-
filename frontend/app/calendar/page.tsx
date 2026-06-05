@@ -36,6 +36,26 @@ const deleteTask = async (id: number) => {
   }
 };
 
+const completeTask = async (task) => {
+  try {
+    await fetch(`http://localhost:5000/tasks/${task.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...task,
+        completed: true,
+      }),
+    });
+
+    fetchTasks();
+    setIsViewOpen(false);
+  } catch (err) {
+    console.log("Error completing task:", err);
+  }
+};
+
 useEffect(() => {
   const fetchTasks = async () => {
     try {
@@ -67,7 +87,9 @@ const fetchTasks = async () => {
       date: task.dueDate.split("T")[0],
     }));
 
-    setTasks(formatted);
+    setTasks(
+  formatted.filter((task) => !task.completed)
+);
   } catch (err) {
     console.log(err);
   }
@@ -375,7 +397,10 @@ const getFontColor = (priority:string) => {
   task={selectedTask}
   onDelete={deleteTask}
   onEdit={handleEdit}
+  onComplete={completeTask}
+
 />
+
     
     </div>
   );
