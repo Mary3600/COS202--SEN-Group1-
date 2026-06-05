@@ -150,9 +150,18 @@ app.delete("/tasks/:id", async (req, res) => {
 });
 
 
+//uSER AUTHETICATION
+
 app.post("/register", async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    // Validation
+    if (!email || !password) {
+      return res.status(400).json({
+        error: "Email and password required",
+      });
+    }
 
     const existingUser = await prisma.user.findUnique({
       where: { email },
@@ -173,9 +182,13 @@ app.post("/register", async (req, res) => {
       },
     });
 
-    res.json({
+    res.status(201).json({
       message: "User created successfully",
-      user,
+      user: {
+        id: user.id,
+        email: user.email,
+        createdAt: user.createdAt,
+      },
     });
   } catch (error) {
     console.error(error);
@@ -189,6 +202,13 @@ app.post("/register", async (req, res) => {
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    // Validation
+    if (!email || !password) {
+      return res.status(400).json({
+        error: "Email and password required",
+      });
+    }
 
     const user = await prisma.user.findUnique({
       where: { email },
@@ -220,6 +240,10 @@ app.post("/login", async (req, res) => {
     res.json({
       message: "Login successful",
       token,
+      user: {
+        id: user.id,
+        email: user.email,
+      },
     });
   } catch (error) {
     console.error(error);
@@ -229,6 +253,7 @@ app.post("/login", async (req, res) => {
     });
   }
 });
+//USER AUTH ENDS 
 
 const PORT = 5000;
 
