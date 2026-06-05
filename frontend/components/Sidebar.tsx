@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
   LayoutDashboard,
@@ -8,6 +9,7 @@ import {
 } from "lucide-react";
 
 export default function Sidebar({
+  
   sidebarOpen,
   setSidebarOpen,
   collapsed,
@@ -16,6 +18,7 @@ export default function Sidebar({
   setActivePage,
   openModal,
 }) {
+    const router = useRouter();
 
     if (!sidebarOpen) return null;
 
@@ -69,7 +72,10 @@ export default function Sidebar({
       <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
         {/* DASHBOARD */}
         <div
-          onClick={() => setActivePage("dashboard")}
+          onClick={() => {
+  setActivePage("tasklist");
+  router.push("/tasklist");
+}}
           style={{
             display: "flex",
             alignItems: "center",
@@ -81,12 +87,15 @@ export default function Sidebar({
           }}
         >
           <LayoutDashboard size={20} />
-          {!collapsed && <span>Dashboard</span>}
+          {!collapsed && <span>Task List</span>}
         </div>
 
         {/* CALENDAR */}
         <div
-          onClick={() => setActivePage("calendar")}
+          onClick={() => {
+  setActivePage("calendar");
+  router.push("/calendar");
+}}
           style={{
             display: "flex",
             alignItems: "center",
@@ -103,7 +112,10 @@ export default function Sidebar({
 
         {/* ARCHIVE */}
         <div
-          onClick={() => setActivePage("archive")}
+         onClick={() => {
+  setActivePage("completed");
+  router.push("/completed");
+}}
           style={{
             display: "flex",
             alignItems: "center",
@@ -115,7 +127,7 @@ export default function Sidebar({
           }}
         >
           <ArchiveRestore size={20} />
-          {!collapsed && <span>Archive</span>}
+          {!collapsed && <span>Completed Tasks</span>}
         </div>
       </div>
 

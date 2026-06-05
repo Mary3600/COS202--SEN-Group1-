@@ -8,6 +8,7 @@ export default function TaskViewModal({
   task,
   onDelete,
   onEdit,
+  onComplete,
 }) {
   if (!isOpen || !task) return null;
 
@@ -101,7 +102,8 @@ export default function TaskViewModal({
               border: "none",
               background: "#165A50",
               cursor: "pointer",
-              width:"45%",
+              width:"25%",
+              height:"30%",
             }}
           >
             Edit
@@ -116,11 +118,28 @@ export default function TaskViewModal({
               background: "#ef4444",
               color: "#fff",
               cursor: "pointer",
-              width:"45%",
+              width:"25%",
+              height:"30%",
             }}
           >
             Delete
           </button>
+
+          <button
+  onClick={() => onComplete(task)}
+  style={{
+    padding: "10px 15px",
+              borderRadius: "10px",
+              border: "none",
+              background: "#22c55e",
+              color: "#fff",
+              cursor: "pointer",
+              width:"40%",
+              height:"30%",
+  }}
+>
+   Complete
+</button>
         </div>
       </div>
     </div>

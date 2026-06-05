@@ -57,43 +57,51 @@ const updateTask = async (id, taskData) => {
   }
 };
 
-  const handleSubmit = async  () => {
-    // ✅ FIX 1: validation
-    if (!title || !date) {
-      setError("Please fill all fields");
+  const handleSubmit = async () => {
+  if (!title || !date) {
+    setError("Please fill all fields");
+    return;
+  }
+
+  setError("");
+
+  const taskPayload = {
+    title,
+    priority,
+    category: aspect,
+    dueDate: date,
+  };
+
+  let taskResult;
+
+  try {
+    if (editingTask) {
+      taskResult = await updateTask(editingTask.id, taskPayload);
+    } else {
+      taskResult = await createTask(taskPayload);
+    }
+
+    if (!taskResult) {
+      setError("Something went wrong. Try again.");
       return;
     }
 
-    setError("");
+    onAddTask({
+      ...taskResult,
+      date: taskResult.dueDate?.split("T")[0],
+    });
 
-    let taskResult;
-
-if (editingTask) {
-  taskResult = await updateTask(editingTask.id, {
-    title,
-    priority,
-    category: aspect,
-    dueDate: date,
-  });
-} else {
-  taskResult = await createTask({
-    title,
-    priority,
-    category: aspect,
-    dueDate: date,
-  });
-}
-
-onAddTask(taskResult);
-
-    // reset
     setTitle("");
     setDate("");
     setPriority("medium");
     setAspect("academic");
 
     onClose();
-  };
+  } catch (err) {
+    console.log("Submit error:", err);
+    setError("Network error");
+  }
+};
 
   return (
     <div
