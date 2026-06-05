@@ -9,6 +9,41 @@ export default function Home() {
 const [email, setEmail] = useState("");
 const [password, setPassword] = useState("");
 
+const handleAuth = async () => {
+  try {
+    const endpoint = isLogin
+      ? "http://localhost:5000/login"
+      : "http://localhost:5000/register";
+
+    const payload = isLogin
+      ? { email, password }
+      : { name, email, password };
+
+    const res = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+
+    console.log(data);
+
+    if (!res.ok) {
+      alert(data.message || "Something went wrong");
+      return;
+    }
+
+    alert(isLogin ? "Login successful!" : "Account created!");
+
+  } catch (err) {
+    console.error(err);
+    alert("Server connection failed");
+  }
+};
+
   return (
     <div
       style={{
@@ -102,20 +137,33 @@ const [password, setPassword] = useState("");
 
           {!isLogin && (
             <input
-              type="text"
-              placeholder="Full Name"
-              style={inputStyle}
-            />
+  type="text"
+  placeholder="Full Name"
+  style={inputStyle}
+  value={name}
+  onChange={(e) => setName(e.target.value)}
+/>
+
           )}
+          <input
+  type="email"
+  placeholder="Email"
+  style={inputStyle}
+  value={email}
+  onChange={(e) => setEmail(e.target.value)}
+/>
 
           <input
-            type="password"
-            placeholder="Password"
-            style={inputStyle}
-          />
+  type="password"
+  placeholder="Password"
+  style={inputStyle}
+  value={password}
+  onChange={(e) => setPassword(e.target.value)}
+/>
 
           <button
-            style={{
+  onClick={handleAuth}
+  style={{
               height: "50px",
               border: "none",
               borderRadius: "12px",
